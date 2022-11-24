@@ -16,7 +16,6 @@ const notes = await  getNotes()
     console.log(chalk.bgGreen('Note was added!'))
 }
 
-
 async function getNotes(){
     const notes = await fs.readFile(notesPath, {encoding:'utf-8'})
     return Array.isArray(JSON.parse(notes)) ? JSON.parse(notes) : []
@@ -31,18 +30,28 @@ const  notes = await  getNotes()
     })
 }
 
-async function removeNotes(id){
-    id = id.toString()
+async function removeNote(id){
     const  notes = await  getNotes()
+    const filteredNotes = notes.filter(note => note.id !== id)
 
-    // console.log(chalk.bgBlue('Here is the new list of notes :'))
-    const filterNotes = notes.filter(note => note.id !== id)
-
-    await fs.writeFile(notesPath, JSON.stringify(filterNotes))
-    console.log(chalk.bgGreen('Note was delete!'))
+    await fs.writeFile(notesPath, JSON.stringify(filteredNotes))
+    console.log(chalk.bgGreen('Note has been removed!'))
 }
+
+async function editNote(id, title){
+    const notes = await  getNotes()
+
+    const notesIndex = notes.findIndex(el => el.id === id)
+    notes[notesIndex]. title = title
+
+    await fs.writeFile(notesPath, JSON.stringify(notes))
+    console.log(chalk.bgGreen('Note was changed!'))
+}
+
 module.exports= {
     addNote,
     printNotes,
-    removeNotes
+    removeNote,
+    getNotes,
+    editNote
 }
